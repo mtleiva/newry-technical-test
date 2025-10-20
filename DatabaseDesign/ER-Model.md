@@ -4,11 +4,11 @@
 
 Este modelo de base de datos soporta una aplicación web de inversiones donde los usuarios pueden:
 
-- Registrarse con datos personales y financieros
-- Gestionar múltiples cuentas bancarias
-- Realizar un cuestionario de perfil de riesgo
+- Registrarse con datos personales
+- Gestionar múltiples cuentas bancarias (datos financieros: cuentas corrientes, titulares, bancos)
+- Realizar cuestionarios de perfil de riesgo para medir su nivel de temeridad
 - Ver y gestionar sus inversiones con cálculo de intereses
-- Acceder a un blog corporativo
+- Acceder a un blog corporativo gestionado por Dynamics Financial S.L
 
 ## Diagrama Entidad-Relación (Mermaid)
 
@@ -110,15 +110,6 @@ erDiagram
         string autor
         string categoria
         boolean publicado
-    }
-
-    DATOS_FINANCIEROS {
-        int id_dato PK
-        string tipo_dato
-        decimal valor
-        datetime fecha_actualizacion
-        string descripcion
-        string fuente
     }
 ```
 
@@ -294,36 +285,21 @@ Almacena las publicaciones del blog corporativo.
 
 - Entidad independiente (no tiene relaciones con otras tablas)
 
-### 10. DATOS_FINANCIEROS
 
-Almacena datos financieros actualizados por Dynamics Financial.
-
-**Atributos:**
-
-- `id_dato` (PK): Identificador único del dato
-- `tipo_dato`: Tipo de información financiera
-- `valor`: Valor numérico del dato
-- `fecha_actualizacion`: Fecha de última actualización
-- `descripcion`: Descripción del dato
-- `fuente`: Fuente de la información
-
-**Relaciones:**
-
-- Entidad independiente (no tiene relaciones con otras tablas)
 
 ## Cardinalidades
 
-| Relación                              | Cardinalidad | Descripción                                        |
-| ------------------------------------- | ------------ | -------------------------------------------------- |
-| USUARIO - CUENTA_BANCARIA             | 1:N          | Un usuario puede tener múltiples cuentas bancarias |
-| USUARIO - CUESTIONARIO                | 1:N          | Un usuario puede completar múltiples cuestionarios |
+| Relación                              | Cardinalidad | Descripción                                             |
+| ------------------------------------- | ------------ | ------------------------------------------------------- |
+| USUARIO - CUENTA_BANCARIA             | 1:N          | Un usuario puede tener múltiples cuentas bancarias      |
+| USUARIO - CUESTIONARIO                | 1:N          | Un usuario puede completar múltiples cuestionarios      |
 | TIPO_CUESTIONARIO - CUESTIONARIO      | 1:N          | Un tipo de cuestionario puede ser usado múltiples veces |
-| TIPO_CUESTIONARIO - PREGUNTA          | 1:N          | Un tipo de cuestionario contiene múltiples preguntas |
-| USUARIO - INVERSION                   | 1:N          | Un usuario puede realizar múltiples inversiones    |
-| BANCO - CUENTA_BANCARIA               | 1:N          | Un banco gestiona múltiples cuentas                |
-| CUENTA_BANCARIA - INVERSION           | 1:N          | Una cuenta puede financiar múltiples inversiones   |
-| CUESTIONARIO - RESPUESTA_CUESTIONARIO | 1:N          | Un cuestionario contiene múltiples respuestas      |
-| PREGUNTA - RESPUESTA_CUESTIONARIO     | 1:N          | Una pregunta puede ser respondida múltiples veces  |
+| TIPO_CUESTIONARIO - PREGUNTA          | 1:N          | Un tipo de cuestionario contiene múltiples preguntas    |
+| USUARIO - INVERSION                   | 1:N          | Un usuario puede realizar múltiples inversiones         |
+| BANCO - CUENTA_BANCARIA               | 1:N          | Un banco gestiona múltiples cuentas                     |
+| CUENTA_BANCARIA - INVERSION           | 1:N          | Una cuenta puede financiar múltiples inversiones        |
+| CUESTIONARIO - RESPUESTA_CUESTIONARIO | 1:N          | Un cuestionario contiene múltiples respuestas           |
+| PREGUNTA - RESPUESTA_CUESTIONARIO     | 1:N          | Una pregunta puede ser respondida múltiples veces       |
 
 ## Restricciones de Integridad
 

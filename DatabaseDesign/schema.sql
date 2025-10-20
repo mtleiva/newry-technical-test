@@ -25,7 +25,7 @@ IF OBJECT_ID('CUENTA_BANCARIA', 'U') IS NOT NULL DROP TABLE CUENTA_BANCARIA;
 IF OBJECT_ID('BANCO', 'U') IS NOT NULL DROP TABLE BANCO;
 IF OBJECT_ID('USUARIO', 'U') IS NOT NULL DROP TABLE USUARIO;
 IF OBJECT_ID('BLOG', 'U') IS NOT NULL DROP TABLE BLOG;
-IF OBJECT_ID('DATOS_FINANCIEROS', 'U') IS NOT NULL DROP TABLE DATOS_FINANCIEROS;
+
 GO
 
 -- =============================================
@@ -185,19 +185,7 @@ CREATE TABLE BLOG (
 );
 GO
 
--- =============================================
--- Tabla: DATOS_FINANCIEROS
--- Descripción: Almacena datos financieros actualizados
--- =============================================
-CREATE TABLE DATOS_FINANCIEROS (
-    id_dato INT IDENTITY(1,1) PRIMARY KEY,
-    tipo_dato NVARCHAR(100) NOT NULL,
-    valor DECIMAL(18,4) NOT NULL,
-    fecha_actualizacion DATETIME NOT NULL DEFAULT GETDATE(),
-    descripcion NVARCHAR(500),
-    fuente NVARCHAR(200)
-);
-GO
+
 
 -- =============================================
 -- Índices para optimización de consultas
@@ -228,10 +216,7 @@ CREATE INDEX idx_blog_categoria ON BLOG(categoria);
 CREATE INDEX idx_blog_publicado ON BLOG(publicado);
 GO
 
--- Índices en DATOS_FINANCIEROS
-CREATE INDEX idx_datos_tipo ON DATOS_FINANCIEROS(tipo_dato);
-CREATE INDEX idx_datos_fecha ON DATOS_FINANCIEROS(fecha_actualizacion);
-GO
+
 
 -- =============================================
 -- Comentarios de tablas (SQL Server Extended Properties)
@@ -281,10 +266,7 @@ EXEC sp_addextendedproperty
     @level0type = N'SCHEMA', @level0name = 'dbo',
     @level1type = N'TABLE', @level1name = 'BLOG';
 
-EXEC sp_addextendedproperty 
-    @name = N'MS_Description', @value = 'Almacena datos financieros actualizados',
-    @level0type = N'SCHEMA', @level0name = 'dbo',
-    @level1type = N'TABLE', @level1name = 'DATOS_FINANCIEROS';
+
 GO
 
 PRINT 'Base de datos DynamicsFinancial creada exitosamente';

@@ -198,12 +198,7 @@ INSERT INTO BLOG (titulo, contenido, autor, categoria, publicado) VALUES
 ('Diversificación de Cartera', 'Importancia de diversificar tus inversiones...', 'Dynamics Financial', 'Estrategia', 1);
 GO
 
--- Insertar Datos Financieros
-INSERT INTO DATOS_FINANCIEROS (tipo_dato, valor, descripcion, fuente) VALUES
-('Euribor 12 meses', 3.50, 'Tasa Euribor a 12 meses', 'BCE'),
-('Índice IBEX 35', 9850.50, 'Valor del índice IBEX 35', 'Bolsa de Madrid'),
-('Tipo de cambio EUR/USD', 1.0850, 'Tipo de cambio Euro-Dólar', 'Mercado Forex');
-GO
+
 
 PRINT 'Datos de prueba insertados correctamente';
 PRINT '';
@@ -218,7 +213,13 @@ SELECT 'Cuentas Bancarias', COUNT(*) FROM CUENTA_BANCARIA
 UNION ALL
 SELECT 'Inversiones', COUNT(*) FROM INVERSION
 UNION ALL
-SELECT 'Cuestionarios', COUNT(*) FROM CUESTIONARIO
+SELECT 'Tipos de Cuestionario', COUNT(*) FROM TIPO_CUESTIONARIO
+UNION ALL
+SELECT 'Preguntas', COUNT(*) FROM PREGUNTA
+UNION ALL
+SELECT 'Cuestionarios Completados', COUNT(*) FROM CUESTIONARIO
+UNION ALL
+SELECT 'Respuestas', COUNT(*) FROM RESPUESTA_CUESTIONARIO
 UNION ALL
 SELECT 'Posts de Blog', COUNT(*) FROM BLOG;
 GO
