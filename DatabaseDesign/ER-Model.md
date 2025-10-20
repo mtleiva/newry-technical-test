@@ -3,6 +3,7 @@
 ## Descripción General
 
 Este modelo de base de datos soporta una aplicación web de inversiones donde los usuarios pueden:
+
 - Registrarse con datos personales y financieros
 - Gestionar múltiples cuentas bancarias
 - Realizar un cuestionario de perfil de riesgo
@@ -14,11 +15,13 @@ Este modelo de base de datos soporta una aplicación web de inversiones donde lo
 ```mermaid
 erDiagram
     USUARIO ||--o{ CUENTA_BANCARIA : "tiene"
-    USUARIO ||--|| CUESTIONARIO : "completa"
+    USUARIO ||--o{ CUESTIONARIO : "completa"
     USUARIO ||--o{ INVERSION : "realiza"
     BANCO ||--o{ CUENTA_BANCARIA : "gestiona"
     CUENTA_BANCARIA ||--o{ INVERSION : "financia"
-    CUESTIONARIO ||--o{ RESPUESTA_CUESTIONARIO : "contiene"
+    TIPO_CUESTIONARIO ||--o{ CUESTIONARIO : "define"
+    TIPO_CUESTIONARIO ||--o{ PREGUNTA : "contiene"
+    CUESTIONARIO ||--o{ RESPUESTA_CUESTIONARIO : "tiene_respuestas"
     PREGUNTA ||--o{ RESPUESTA_CUESTIONARIO : "respondida_en"
 
     USUARIO {
@@ -65,9 +68,18 @@ erDiagram
         string estado
     }
 
+    TIPO_CUESTIONARIO {
+        int id_tipo_cuestionario PK
+        string nombre
+        string descripcion
+        int version
+        boolean activo
+    }
+
     CUESTIONARIO {
         int id_cuestionario PK
         int id_usuario FK
+        int id_tipo_cuestionario FK
         datetime fecha_completado
         int puntuacion_riesgo
         string perfil_inversor
@@ -75,6 +87,7 @@ erDiagram
 
     PREGUNTA {
         int id_pregunta PK
+        int id_tipo_cuestionario FK
         string texto_pregunta
         string tipo_pregunta
         int orden
@@ -112,9 +125,11 @@ erDiagram
 ## Entidades Detalladas
 
 ### 1. USUARIO
+
 Almacena la información de los clientes registrados en la plataforma.
 
 **Atributos:**
+
 - `id_usuario` (PK): Identificador único del usuario
 - `nombre`: Nombre del usuario
 - `apellidos`: Apellidos del usuario
@@ -126,14 +141,17 @@ Almacena la información de los clientes registrados en la plataforma.
 - `activo`: Indica si la cuenta está activa
 
 **Relaciones:**
+
 - 1:N con CUENTA_BANCARIA (un usuario puede tener múltiples cuentas)
 - 1:1 con CUESTIONARIO (un usuario completa un cuestionario)
 - 1:N con INVERSION (un usuario puede tener múltiples inversiones)
 
 ### 2. CUENTA_BANCARIA
+
 Almacena las cuentas bancarias de los usuarios.
 
 **Atributos:**
+
 - `id_cuenta` (PK): Identificador único de la cuenta
 - `numero_cuenta` (UK): Número de cuenta bancaria único
 - `titular`: Nombre del titular de la cuenta
@@ -144,14 +162,17 @@ Almacena las cuentas bancarias de los usuarios.
 - `activa`: Indica si la cuenta está activa
 
 **Relaciones:**
+
 - N:1 con USUARIO (muchas cuentas pertenecen a un usuario)
 - N:1 con BANCO (muchas cuentas pertenecen a un banco)
 - 1:N con INVERSION (una cuenta puede financiar múltiples inversiones)
 
 ### 3. BANCO
+
 Almacena información de las entidades bancarias.
 
 **Atributos:**
+
 - `id_banco` (PK): Identificador único del banco
 - `nombre_banco`: Nombre de la entidad bancaria
 - `codigo_banco` (UK): Código único del banco
@@ -159,12 +180,15 @@ Almacena información de las entidades bancarias.
 - `telefono`: Teléfono de contacto
 
 **Relaciones:**
+
 - 1:N con CUENTA_BANCARIA (un banco gestiona múltiples cuentas)
 
 ### 4. INVERSION
+
 Almacena las inversiones realizadas por los usuarios.
 
 **Atributos:**
+
 - `id_inversion` (PK): Identificador único de la inversión
 - `id_usuario` (FK): Referencia al usuario inversor
 - `id_cuenta` (FK): Referencia a la cuenta que financia la inversión
@@ -177,40 +201,70 @@ Almacena las inversiones realizadas por los usuarios.
 - `estado`: Estado actual (activa, finalizada, cancelada)
 
 **Relaciones:**
+
 - N:1 con USUARIO (muchas inversiones pertenecen a un usuario)
 - N:1 con CUENTA_BANCARIA (muchas inversiones se financian desde una cuenta)
 
-### 5. CUESTIONARIO
+### 5. TIPO_CUESTIONARIO
+
+Almacena los diferentes tipos o versiones de cuestionarios disponibles.
+
+**Atributos:**
+
+- `id_tipo_cuestionario` (PK): Identificador único del tipo de cuestionario
+- `nombre`: Nombre del tipo de cuestionario
+- `descripcion`: Descripción del propósito del cuestionario
+- `version`: Versión del cuestionario
+- `activo`: Indica si el tipo de cuestionario está activo
+
+**Relaciones:**
+
+- 1:N con CUESTIONARIO (un tipo puede ser usado en múltiples cuestionarios completados)
+- 1:N con PREGUNTA (un tipo contiene múltiples preguntas)
+
+### 6. CUESTIONARIO
+
 Almacena el cuestionario de perfil de riesgo completado por cada usuario.
 
 **Atributos:**
-- `id_cuestionario` (PK): Identificador único del cuestionario
+
+- `id_cuestionario` (PK): Identificador único del cuestionario completado
 - `id_usuario` (FK): Referencia al usuario que lo completó
+- `id_tipo_cuestionario` (FK): Referencia al tipo de cuestionario utilizado
 - `fecha_completado`: Fecha de finalización del cuestionario
 - `puntuacion_riesgo`: Puntuación total obtenida
 - `perfil_inversor`: Perfil resultante (conservador, moderado, agresivo)
 
 **Relaciones:**
-- 1:1 con USUARIO (un cuestionario por usuario)
+
+- N:1 con USUARIO (un usuario puede completar múltiples cuestionarios)
+- N:1 con TIPO_CUESTIONARIO (muchos cuestionarios completados usan un tipo)
 - 1:N con RESPUESTA_CUESTIONARIO (un cuestionario tiene múltiples respuestas)
 
-### 6. PREGUNTA
+### 7. PREGUNTA
+
 Almacena las preguntas del cuestionario de perfil de riesgo.
 
 **Atributos:**
+
 - `id_pregunta` (PK): Identificador único de la pregunta
+- `id_tipo_cuestionario` (FK): Referencia al tipo de cuestionario al que pertenece
 - `texto_pregunta`: Texto de la pregunta
 - `tipo_pregunta`: Tipo de pregunta (opción múltiple, escala, etc.)
 - `orden`: Orden de presentación de la pregunta
 - `activa`: Indica si la pregunta está activa
 
 **Relaciones:**
+
+- N:1 con TIPO_CUESTIONARIO (muchas preguntas pertenecen a un tipo de cuestionario)
 - 1:N con RESPUESTA_CUESTIONARIO (una pregunta puede ser respondida múltiples veces)
 
-### 7. RESPUESTA_CUESTIONARIO
+### 8. RESPUESTA_CUESTIONARIO
+
 Almacena las respuestas individuales del cuestionario.
 
 **Atributos:**
+
 - `id_respuesta` (PK): Identificador único de la respuesta
 - `id_cuestionario` (FK): Referencia al cuestionario
 - `id_pregunta` (FK): Referencia a la pregunta
@@ -218,13 +272,16 @@ Almacena las respuestas individuales del cuestionario.
 - `puntos`: Puntos asignados a esta respuesta
 
 **Relaciones:**
+
 - N:1 con CUESTIONARIO (muchas respuestas pertenecen a un cuestionario)
 - N:1 con PREGUNTA (muchas respuestas corresponden a una pregunta)
 
-### 8. BLOG
+### 9. BLOG
+
 Almacena las publicaciones del blog corporativo.
 
 **Atributos:**
+
 - `id_post` (PK): Identificador único del post
 - `titulo`: Título de la publicación
 - `contenido`: Contenido completo del post
@@ -234,12 +291,15 @@ Almacena las publicaciones del blog corporativo.
 - `publicado`: Indica si está visible públicamente
 
 **Relaciones:**
+
 - Entidad independiente (no tiene relaciones con otras tablas)
 
-### 9. DATOS_FINANCIEROS
+### 10. DATOS_FINANCIEROS
+
 Almacena datos financieros actualizados por Dynamics Financial.
 
 **Atributos:**
+
 - `id_dato` (PK): Identificador único del dato
 - `tipo_dato`: Tipo de información financiera
 - `valor`: Valor numérico del dato
@@ -248,30 +308,33 @@ Almacena datos financieros actualizados por Dynamics Financial.
 - `fuente`: Fuente de la información
 
 **Relaciones:**
+
 - Entidad independiente (no tiene relaciones con otras tablas)
 
 ## Cardinalidades
 
-| Relación | Cardinalidad | Descripción |
-|----------|--------------|-------------|
-| USUARIO - CUENTA_BANCARIA | 1:N | Un usuario puede tener múltiples cuentas bancarias |
-| USUARIO - CUESTIONARIO | 1:1 | Un usuario completa un único cuestionario |
-| USUARIO - INVERSION | 1:N | Un usuario puede realizar múltiples inversiones |
-| BANCO - CUENTA_BANCARIA | 1:N | Un banco gestiona múltiples cuentas |
-| CUENTA_BANCARIA - INVERSION | 1:N | Una cuenta puede financiar múltiples inversiones |
-| CUESTIONARIO - RESPUESTA_CUESTIONARIO | 1:N | Un cuestionario contiene múltiples respuestas |
-| PREGUNTA - RESPUESTA_CUESTIONARIO | 1:N | Una pregunta puede ser respondida múltiples veces |
+| Relación                              | Cardinalidad | Descripción                                        |
+| ------------------------------------- | ------------ | -------------------------------------------------- |
+| USUARIO - CUENTA_BANCARIA             | 1:N          | Un usuario puede tener múltiples cuentas bancarias |
+| USUARIO - CUESTIONARIO                | 1:N          | Un usuario puede completar múltiples cuestionarios |
+| TIPO_CUESTIONARIO - CUESTIONARIO      | 1:N          | Un tipo de cuestionario puede ser usado múltiples veces |
+| TIPO_CUESTIONARIO - PREGUNTA          | 1:N          | Un tipo de cuestionario contiene múltiples preguntas |
+| USUARIO - INVERSION                   | 1:N          | Un usuario puede realizar múltiples inversiones    |
+| BANCO - CUENTA_BANCARIA               | 1:N          | Un banco gestiona múltiples cuentas                |
+| CUENTA_BANCARIA - INVERSION           | 1:N          | Una cuenta puede financiar múltiples inversiones   |
+| CUESTIONARIO - RESPUESTA_CUESTIONARIO | 1:N          | Un cuestionario contiene múltiples respuestas      |
+| PREGUNTA - RESPUESTA_CUESTIONARIO     | 1:N          | Una pregunta puede ser respondida múltiples veces  |
 
 ## Restricciones de Integridad
 
 1. **Claves Primarias (PK)**: Todas las entidades tienen un identificador único
 2. **Claves Foráneas (FK)**: Mantienen la integridad referencial
-3. **Claves Únicas (UK)**: 
+3. **Claves Únicas (UK)**:
    - `email` en USUARIO
    - `numero_cuenta` en CUENTA_BANCARIA
    - `codigo_banco` en BANCO
 4. **NOT NULL**: Campos obligatorios como nombres, fechas de registro, montos
-5. **CHECK**: 
+5. **CHECK**:
    - `monto_invertido > 0`
    - `tasa_interes >= 0`
    - `nivel_temeridad BETWEEN 1 AND 10`

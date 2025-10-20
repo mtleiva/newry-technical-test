@@ -146,23 +146,28 @@ INSERT INTO INVERSION (id_usuario, id_cuenta, monto_invertido, tasa_interes, int
 (3, 8, 18000.00, 4.25, 2295.00, DATEADD(YEAR, -2, GETDATE()), 'Bonos Corporativos', 'activa');
 GO
 
--- Insertar Preguntas del Cuestionario
-INSERT INTO PREGUNTA (texto_pregunta, tipo_pregunta, orden) VALUES
-('¿Cuál es su experiencia en inversiones?', 'opcion_multiple', 1),
-('¿Qué porcentaje de pérdida estaría dispuesto a aceptar?', 'opcion_multiple', 2),
-('¿Cuál es su horizonte temporal de inversión?', 'opcion_multiple', 3),
-('¿Cuál es su objetivo principal al invertir?', 'opcion_multiple', 4),
-('¿Cómo reaccionaría ante una caída del 20% en su inversión?', 'opcion_multiple', 5);
+-- Insertar Tipos de Cuestionario
+INSERT INTO TIPO_CUESTIONARIO (nombre, descripcion, version) VALUES
+('Perfil de Riesgo Inversor', 'Cuestionario para determinar el perfil de riesgo del inversor', 1);
 GO
 
--- Insertar Cuestionarios
-INSERT INTO CUESTIONARIO (id_usuario, puntuacion_riesgo, perfil_inversor) VALUES
-(1, 50, 'moderado'),
-(2, 30, 'conservador'),
-(3, 70, 'agresivo'),
-(4, 40, 'moderado'),
-(5, 60, 'agresivo'),
-(6, 20, 'conservador');
+-- Insertar Preguntas del Cuestionario
+INSERT INTO PREGUNTA (id_tipo_cuestionario, texto_pregunta, tipo_pregunta, orden) VALUES
+(1, '¿Cuál es su experiencia en inversiones?', 'opcion_multiple', 1),
+(1, '¿Qué porcentaje de pérdida estaría dispuesto a aceptar?', 'opcion_multiple', 2),
+(1, '¿Cuál es su horizonte temporal de inversión?', 'opcion_multiple', 3),
+(1, '¿Cuál es su objetivo principal al invertir?', 'opcion_multiple', 4),
+(1, '¿Cómo reaccionaría ante una caída del 20% en su inversión?', 'opcion_multiple', 5);
+GO
+
+-- Insertar Cuestionarios Completados
+INSERT INTO CUESTIONARIO (id_usuario, id_tipo_cuestionario, puntuacion_riesgo, perfil_inversor) VALUES
+(1, 1, 50, 'moderado'),
+(2, 1, 30, 'conservador'),
+(3, 1, 70, 'agresivo'),
+(4, 1, 40, 'moderado'),
+(5, 1, 60, 'agresivo'),
+(6, 1, 20, 'conservador');
 GO
 
 -- Insertar Respuestas de Cuestionario (ejemplo para usuario 1)

@@ -19,6 +19,7 @@ GO
 IF OBJECT_ID('RESPUESTA_CUESTIONARIO', 'U') IS NOT NULL DROP TABLE RESPUESTA_CUESTIONARIO;
 IF OBJECT_ID('CUESTIONARIO', 'U') IS NOT NULL DROP TABLE CUESTIONARIO;
 IF OBJECT_ID('PREGUNTA', 'U') IS NOT NULL DROP TABLE PREGUNTA;
+IF OBJECT_ID('TIPO_CUESTIONARIO', 'U') IS NOT NULL DROP TABLE TIPO_CUESTIONARIO;
 IF OBJECT_ID('INVERSION', 'U') IS NOT NULL DROP TABLE INVERSION;
 IF OBJECT_ID('CUENTA_BANCARIA', 'U') IS NOT NULL DROP TABLE CUENTA_BANCARIA;
 IF OBJECT_ID('BANCO', 'U') IS NOT NULL DROP TABLE BANCO;
@@ -101,18 +102,35 @@ CREATE TABLE INVERSION (
 GO
 
 -- =============================================
+-- Tabla: TIPO_CUESTIONARIO
+-- Descripción: Almacena tipos de cuestionarios
+-- =============================================
+CREATE TABLE TIPO_CUESTIONARIO (
+    id_tipo_cuestionario INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100) NOT NULL,
+    descripcion NVARCHAR(500),
+    version INT NOT NULL DEFAULT 1,
+    activo BIT NOT NULL DEFAULT 1,
+    CONSTRAINT UQ_TipoCuestionario_NombreVersion UNIQUE (nombre, version)
+);
+GO
+
+-- =============================================
 -- Tabla: CUESTIONARIO
--- Descripción: Almacena cuestionarios de perfil de riesgo
+-- Descripción: Almacena cuestionarios de perfil de riesgo completados
 -- =============================================
 CREATE TABLE CUESTIONARIO (
     id_cuestionario INT IDENTITY(1,1) PRIMARY KEY,
-    id_usuario INT NOT NULL UNIQUE,
+    id_usuario INT NOT NULL,
+    id_tipo_cuestionario INT NOT NULL,
     fecha_completado DATETIME NOT NULL DEFAULT GETDATE(),
     puntuacion_riesgo INT NOT NULL,
     perfil_inversor NVARCHAR(50) NOT NULL 
         CHECK (perfil_inversor IN ('conservador', 'moderado', 'agresivo')),
     CONSTRAINT FK_Cuestionario_Usuario FOREIGN KEY (id_usuario) 
-        REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+        REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    CONSTRAINT FK_Cuestionario_TipoCuestionario FOREIGN KEY (id_tipo_cuestionario) 
+        REFERENCES TIPO_CUESTIONARIO(id_tipo_cuestionario) ON DELETE NO ACTION
 );
 GO
 
@@ -122,12 +140,15 @@ GO
 -- =============================================
 CREATE TABLE PREGUNTA (
     id_pregunta INT IDENTITY(1,1) PRIMARY KEY,
+    id_tipo_cuestionario INT NOT NULL,
     texto_pregunta NVARCHAR(500) NOT NULL,
     tipo_pregunta NVARCHAR(50) NOT NULL 
         CHECK (tipo_pregunta IN ('opcion_multiple', 'escala', 'texto_libre')),
     orden INT NOT NULL,
     activa BIT NOT NULL DEFAULT 1,
-    CONSTRAINT UQ_Pregunta_Orden UNIQUE (orden)
+    CONSTRAINT FK_Pregunta_TipoCuestionario FOREIGN KEY (id_tipo_cuestionario) 
+        REFERENCES TIPO_CUESTIONARIO(id_tipo_cuestionario) ON DELETE CASCADE,
+    CONSTRAINT UQ_Pregunta_TipoOrden UNIQUE (id_tipo_cuestionario, orden)
 );
 GO
 
@@ -239,6 +260,11 @@ EXEC sp_addextendedproperty
     @name = N'MS_Description', @value = 'Almacena cuestionarios de perfil de riesgo',
     @level0type = N'SCHEMA', @level0name = 'dbo',
     @level1type = N'TABLE', @level1name = 'CUESTIONARIO';
+
+EXEC sp_addextendedproperty 
+    @name = N'MS_Description', @value = 'Almacena tipos de cuestionarios disponibles',
+    @level0type = N'SCHEMA', @level0name = 'dbo',
+    @level1type = N'TABLE', @level1name = 'TIPO_CUESTIONARIO';
 
 EXEC sp_addextendedproperty 
     @name = N'MS_Description', @value = 'Almacena las preguntas del cuestionario de perfil de riesgo',
