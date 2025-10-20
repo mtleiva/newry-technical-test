@@ -146,6 +146,15 @@ INSERT INTO INVERSION (id_usuario, id_cuenta, monto_invertido, tasa_interes, int
 (3, 8, 18000.00, 4.25, 2295.00, DATEADD(YEAR, -2, GETDATE()), 'Bonos Corporativos', 'activa');
 GO
 
+-- Insertar Preguntas del Cuestionario
+INSERT INTO PREGUNTA (texto_pregunta, tipo_pregunta, orden) VALUES
+('¿Cuál es su experiencia en inversiones?', 'opcion_multiple', 1),
+('¿Qué porcentaje de pérdida estaría dispuesto a aceptar?', 'opcion_multiple', 2),
+('¿Cuál es su horizonte temporal de inversión?', 'opcion_multiple', 3),
+('¿Cuál es su objetivo principal al invertir?', 'opcion_multiple', 4),
+('¿Cómo reaccionaría ante una caída del 20% en su inversión?', 'opcion_multiple', 5);
+GO
+
 -- Insertar Cuestionarios
 INSERT INTO CUESTIONARIO (id_usuario, puntuacion_riesgo, perfil_inversor) VALUES
 (1, 50, 'moderado'),
@@ -157,10 +166,24 @@ INSERT INTO CUESTIONARIO (id_usuario, puntuacion_riesgo, perfil_inversor) VALUES
 GO
 
 -- Insertar Respuestas de Cuestionario (ejemplo para usuario 1)
-INSERT INTO RESPUESTA_CUESTIONARIO (id_cuestionario, numero_pregunta, pregunta, respuesta, puntos) VALUES
-(1, 1, '¿Cuál es su experiencia en inversiones?', 'Intermedia', 5),
-(1, 2, '¿Qué porcentaje de pérdida estaría dispuesto a aceptar?', '10-20%', 5),
-(1, 3, '¿Cuál es su horizonte temporal de inversión?', '5-10 años', 5);
+INSERT INTO RESPUESTA_CUESTIONARIO (id_cuestionario, id_pregunta, respuesta_texto, puntos) VALUES
+(1, 1, 'Intermedia', 5),
+(1, 2, '10-20%', 5),
+(1, 3, '5-10 años', 5);
+GO
+
+-- Insertar Respuestas de Cuestionario (ejemplo para usuario 2 - conservador)
+INSERT INTO RESPUESTA_CUESTIONARIO (id_cuestionario, id_pregunta, respuesta_texto, puntos) VALUES
+(2, 1, 'Principiante', 3),
+(2, 2, 'Menos del 5%', 3),
+(2, 3, 'Más de 10 años', 3);
+GO
+
+-- Insertar Respuestas de Cuestionario (ejemplo para usuario 3 - agresivo)
+INSERT INTO RESPUESTA_CUESTIONARIO (id_cuestionario, id_pregunta, respuesta_texto, puntos) VALUES
+(3, 1, 'Experto', 7),
+(3, 2, 'Más del 30%', 7),
+(3, 3, 'Menos de 3 años', 7);
 GO
 
 -- Insertar Posts de Blog

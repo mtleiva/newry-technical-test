@@ -18,6 +18,7 @@ GO
 -- =============================================
 IF OBJECT_ID('RESPUESTA_CUESTIONARIO', 'U') IS NOT NULL DROP TABLE RESPUESTA_CUESTIONARIO;
 IF OBJECT_ID('CUESTIONARIO', 'U') IS NOT NULL DROP TABLE CUESTIONARIO;
+IF OBJECT_ID('PREGUNTA', 'U') IS NOT NULL DROP TABLE PREGUNTA;
 IF OBJECT_ID('INVERSION', 'U') IS NOT NULL DROP TABLE INVERSION;
 IF OBJECT_ID('CUENTA_BANCARIA', 'U') IS NOT NULL DROP TABLE CUENTA_BANCARIA;
 IF OBJECT_ID('BANCO', 'U') IS NOT NULL DROP TABLE BANCO;
@@ -116,18 +117,35 @@ CREATE TABLE CUESTIONARIO (
 GO
 
 -- =============================================
+-- Tabla: PREGUNTA
+-- Descripción: Almacena las preguntas del cuestionario
+-- =============================================
+CREATE TABLE PREGUNTA (
+    id_pregunta INT IDENTITY(1,1) PRIMARY KEY,
+    texto_pregunta NVARCHAR(500) NOT NULL,
+    tipo_pregunta NVARCHAR(50) NOT NULL 
+        CHECK (tipo_pregunta IN ('opcion_multiple', 'escala', 'texto_libre')),
+    orden INT NOT NULL,
+    activa BIT NOT NULL DEFAULT 1,
+    CONSTRAINT UQ_Pregunta_Orden UNIQUE (orden)
+);
+GO
+
+-- =============================================
 -- Tabla: RESPUESTA_CUESTIONARIO
 -- Descripción: Almacena respuestas individuales del cuestionario
 -- =============================================
 CREATE TABLE RESPUESTA_CUESTIONARIO (
     id_respuesta INT IDENTITY(1,1) PRIMARY KEY,
     id_cuestionario INT NOT NULL,
-    numero_pregunta INT NOT NULL,
-    pregunta NVARCHAR(500) NOT NULL,
-    respuesta NVARCHAR(500) NOT NULL,
+    id_pregunta INT NOT NULL,
+    respuesta_texto NVARCHAR(500) NOT NULL,
     puntos INT NOT NULL DEFAULT 0,
     CONSTRAINT FK_RespuestaCuestionario_Cuestionario FOREIGN KEY (id_cuestionario) 
-        REFERENCES CUESTIONARIO(id_cuestionario) ON DELETE CASCADE
+        REFERENCES CUESTIONARIO(id_cuestionario) ON DELETE CASCADE,
+    CONSTRAINT FK_RespuestaCuestionario_Pregunta FOREIGN KEY (id_pregunta) 
+        REFERENCES PREGUNTA(id_pregunta) ON DELETE NO ACTION,
+    CONSTRAINT UQ_RespuestaCuestionario UNIQUE (id_cuestionario, id_pregunta)
 );
 GO
 
@@ -221,6 +239,11 @@ EXEC sp_addextendedproperty
     @name = N'MS_Description', @value = 'Almacena cuestionarios de perfil de riesgo',
     @level0type = N'SCHEMA', @level0name = 'dbo',
     @level1type = N'TABLE', @level1name = 'CUESTIONARIO';
+
+EXEC sp_addextendedproperty 
+    @name = N'MS_Description', @value = 'Almacena las preguntas del cuestionario de perfil de riesgo',
+    @level0type = N'SCHEMA', @level0name = 'dbo',
+    @level1type = N'TABLE', @level1name = 'PREGUNTA';
 
 EXEC sp_addextendedproperty 
     @name = N'MS_Description', @value = 'Almacena respuestas individuales de cuestionarios',

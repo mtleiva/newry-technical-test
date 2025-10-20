@@ -19,6 +19,7 @@ erDiagram
     BANCO ||--o{ CUENTA_BANCARIA : "gestiona"
     CUENTA_BANCARIA ||--o{ INVERSION : "financia"
     CUESTIONARIO ||--o{ RESPUESTA_CUESTIONARIO : "contiene"
+    PREGUNTA ||--o{ RESPUESTA_CUESTIONARIO : "respondida_en"
 
     USUARIO {
         int id_usuario PK
@@ -72,12 +73,19 @@ erDiagram
         string perfil_inversor
     }
 
+    PREGUNTA {
+        int id_pregunta PK
+        string texto_pregunta
+        string tipo_pregunta
+        int orden
+        boolean activa
+    }
+
     RESPUESTA_CUESTIONARIO {
         int id_respuesta PK
         int id_cuestionario FK
-        int numero_pregunta
-        string pregunta
-        string respuesta
+        int id_pregunta FK
+        string respuesta_texto
         int puntos
     }
 
@@ -186,21 +194,34 @@ Almacena el cuestionario de perfil de riesgo completado por cada usuario.
 - 1:1 con USUARIO (un cuestionario por usuario)
 - 1:N con RESPUESTA_CUESTIONARIO (un cuestionario tiene múltiples respuestas)
 
-### 6. RESPUESTA_CUESTIONARIO
+### 6. PREGUNTA
+Almacena las preguntas del cuestionario de perfil de riesgo.
+
+**Atributos:**
+- `id_pregunta` (PK): Identificador único de la pregunta
+- `texto_pregunta`: Texto de la pregunta
+- `tipo_pregunta`: Tipo de pregunta (opción múltiple, escala, etc.)
+- `orden`: Orden de presentación de la pregunta
+- `activa`: Indica si la pregunta está activa
+
+**Relaciones:**
+- 1:N con RESPUESTA_CUESTIONARIO (una pregunta puede ser respondida múltiples veces)
+
+### 7. RESPUESTA_CUESTIONARIO
 Almacena las respuestas individuales del cuestionario.
 
 **Atributos:**
 - `id_respuesta` (PK): Identificador único de la respuesta
 - `id_cuestionario` (FK): Referencia al cuestionario
-- `numero_pregunta`: Número de orden de la pregunta
-- `pregunta`: Texto de la pregunta
-- `respuesta`: Respuesta seleccionada por el usuario
+- `id_pregunta` (FK): Referencia a la pregunta
+- `respuesta_texto`: Respuesta seleccionada por el usuario
 - `puntos`: Puntos asignados a esta respuesta
 
 **Relaciones:**
 - N:1 con CUESTIONARIO (muchas respuestas pertenecen a un cuestionario)
+- N:1 con PREGUNTA (muchas respuestas corresponden a una pregunta)
 
-### 7. BLOG
+### 8. BLOG
 Almacena las publicaciones del blog corporativo.
 
 **Atributos:**
@@ -215,7 +236,7 @@ Almacena las publicaciones del blog corporativo.
 **Relaciones:**
 - Entidad independiente (no tiene relaciones con otras tablas)
 
-### 8. DATOS_FINANCIEROS
+### 9. DATOS_FINANCIEROS
 Almacena datos financieros actualizados por Dynamics Financial.
 
 **Atributos:**
@@ -239,6 +260,7 @@ Almacena datos financieros actualizados por Dynamics Financial.
 | BANCO - CUENTA_BANCARIA | 1:N | Un banco gestiona múltiples cuentas |
 | CUENTA_BANCARIA - INVERSION | 1:N | Una cuenta puede financiar múltiples inversiones |
 | CUESTIONARIO - RESPUESTA_CUESTIONARIO | 1:N | Un cuestionario contiene múltiples respuestas |
+| PREGUNTA - RESPUESTA_CUESTIONARIO | 1:N | Una pregunta puede ser respondida múltiples veces |
 
 ## Restricciones de Integridad
 
@@ -268,6 +290,8 @@ Almacena datos financieros actualizados por Dynamics Financial.
 
 1. **Escalabilidad**: El modelo permite agregar nuevos tipos de inversiones sin modificar la estructura
 2. **Auditoría**: Se incluyen campos de fecha para rastrear cambios
-3. **Flexibilidad**: El cuestionario puede adaptarse a diferentes preguntas sin cambiar el esquema
-4. **Seguridad**: Los datos sensibles como cuentas bancarias están normalizados
-5. **Performance**: Los índices optimizan las consultas más frecuentes (búsqueda por apellido, listados de inversiones)
+3. **Flexibilidad**: Las preguntas del cuestionario están normalizadas en una tabla separada, permitiendo agregar, modificar o desactivar preguntas sin afectar las respuestas históricas
+4. **Reutilización**: La tabla PREGUNTA permite que las mismas preguntas sean utilizadas en múltiples cuestionarios
+5. **Seguridad**: Los datos sensibles como cuentas bancarias están normalizados
+6. **Performance**: Los índices optimizan las consultas más frecuentes (búsqueda por apellido, listados de inversiones)
+7. **Integridad**: La constraint UNIQUE en RESPUESTA_CUESTIONARIO evita que un usuario responda la misma pregunta múltiples veces en un cuestionario
