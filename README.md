@@ -1,21 +1,48 @@
 # Newry Technical Test - Dynamics Financial S.L
 
-Este repositorio contiene las soluciones a la prueba técnica de Newry, que incluye ejercicios de programación en C#, diseño de base de datos, consultas SQL y ejemplos de tecnologías web.
+[![.NET](https://img.shields.io/badge/.NET-6.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-10.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
+[![Tests](https://img.shields.io/badge/Tests-22%2F22%20Passing-success)](https://github.com/mtleiva/newry-technical-test)
+
+Este repositorio contiene las soluciones completas a la prueba técnica de Newry, que incluye ejercicios de programación en C#, diseño de base de datos, consultas SQL y documentación de tecnologías web.
 
 ## 📁 Estructura del Proyecto
 
 ```
 newry-technical-test/
-├── ProgrammingExercises/     # Ejercicios de programación en C#
-│   ├── Exercise1/            # Separador de números pares e impares
-│   └── Exercise2/            # Contador de vocales
-├── DatabaseDesign/           # Modelo E/R y esquema SQL
-├── WebQuestionnaire/         # Cuestionario web y ejemplos
-│   ├── answers.md           # Respuestas teóricas
-│   ├── MVCExample/          # Ejemplo de patrón MVC
-│   └── RESTExample/         # Ejemplo de API REST
-└── README.md
+├── 📂 ProgrammingExercises/
+│   ├── 📂 Exercise1/              # ✅ Separador de pares e impares
+│   │   ├── EvenOddSeparator.cs   # Algoritmo principal
+│   │   ├── Program.cs             # Aplicación de consola
+│   │   └── Exercise1.csproj
+│   ├── 📂 Exercise1.Tests/        # ✅ 10 pruebas unitarias
+│   ├── 📂 Exercise2/              # ✅ Contador de vocales
+│   │   ├── VowelCounter.cs       # Algoritmo principal
+│   │   ├── Program.cs             # Aplicación de consola
+│   │   └── Exercise2.csproj
+│   └── 📂 Exercise2.Tests/        # ✅ 12 pruebas unitarias
+├── 📂 DatabaseDesign/
+│   ├── ER-Model.md               # ✅ Modelo E/R completo
+│   ├── schema.sql                # ✅ Script de creación de BD
+│   └── queries.sql               # ✅ Consultas SQL + datos de prueba
+├── 📂 WebQuestionnaire/
+│   ├── answers.md                # ✅ Respuestas teóricas completas
+│   ├── MVCExample/               # (Enlaces a proyectos externos)
+│   └── RESTExample/              # (Enlaces a proyectos externos)
+├── README.md                     # Este archivo
+├── RESUMEN.md                    # Resumen ejecutivo
+└── .gitignore
 ```
+
+## ✨ Características Destacadas
+
+- ✅ **22/22 pruebas unitarias pasando**
+- ✅ **Código limpio y bien documentado**
+- ✅ **Pseudocódigo incluido en algoritmos**
+- ✅ **Base de datos completamente diseñada**
+- ✅ **Consultas SQL con datos de prueba**
+- ✅ **Documentación exhaustiva de tecnologías web**
 
 ## 🚀 Componentes
 
